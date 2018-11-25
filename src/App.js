@@ -1,28 +1,35 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {Component} from 'react';
+
+import LoadScreen from "./screens/LoadScreen";
+import QRScreen from "./screens/QRScreen";
+
+import './css/App.css';
+import ListScreen from "./screens/ListScreen";
 
 class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
-  }
+    constructor(props) {
+        super(props);
+        this.state = {"path": "load"};
+    }
+
+    load = () => {
+        this.setState({"path": "list"});
+    };
+
+    render() {
+        switch (this.state.path) {
+            case "load":
+                return (
+                    <LoadScreen load={this.load}/>
+                );
+            case "list":
+                return (
+                    <ListScreen/>
+                );
+            default:
+
+        }
+    }
 }
 
 export default App;
