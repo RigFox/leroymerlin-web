@@ -1,7 +1,6 @@
 import React, {Component} from "react";
 
 import '../css/LoadScreen.css';
-import no_image_icon from '../images/no-image-icon.png';
 
 class ProductScreen extends Component {
     constructor(props) {
@@ -9,6 +8,15 @@ class ProductScreen extends Component {
     }
 
     render() {
+        const buttons = this.props.toAdd ?
+            <button type="button" className="btn btn-success btn-block" onClick={this.props.onAdd}>Добавить в
+                список
+            </button>
+            :
+            <button type="button" className="btn btn-danger btn-block" onClick={this.props.onRemove}>Удалить из
+                списка
+            </button>;
+
         return (
             <div>
                 <div className="row">
@@ -20,19 +28,21 @@ class ProductScreen extends Component {
                         <h3>Товар</h3>
                     </div>
 
-                    <div className="text-center">
-                        <img width={"70%"} src={no_image_icon}/>
-                        <h4>{this.props.product.name}</h4>
-                        <p>Стоимость: {this.props.product.price}р</p>
-                        <a href={"http://leroymerlin.ru" + this.props.product.link} target="_blank" rel="noopener noreferrer">Ссылка на сайте (в
-                            новом окне)</a>
-                    </div>
+                    <div style={{padding: 10}}>
+                        <div className="text-center">
+                            <img width={"50%"} src={this.props.product.image}/>
+                            <h4>{this.props.product.name}</h4>
+                            <p>Стоимость: {this.props.product.price}р</p>
+                            <a href={"http://leroymerlin.ru" + this.props.product.link} target="_blank"
+                               rel="noopener noreferrer">Ссылка на сайте (в
+                                новом окне)</a>
+                        </div>
 
-                    <button type="button" className="btn btn-primary btn-block" onClick={this.props.onAdd}>Добавить в
-                        список
-                    </button>
-                    <button type="button" className="btn btn-secondary btn-block" onClick={this.props.onReturn}>Отмена
-                    </button>
+                        {buttons}
+                        <button type="button" className="btn btn-secondary btn-block"
+                                onClick={this.props.onReturn}>Отмена
+                        </button>
+                    </div>
                 </div>
             </div>
         );
