@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 
 import LoadScreen from "./screens/LoadScreen";
-import QRScreen from "./screens/QRScreen";
 
 import './css/App.css';
 import ListScreen from "./screens/ListScreen";

@@ -1,11 +1,12 @@
 import React, {Component} from "react";
 
-import '../css/LoadScreen.css';
 import QRScreen from "./QRScreen";
 import data from "../data/data"
 import ProductScreen from "./ProductScreen";
 
 import scan from "../images/scan-icon.png"
+import share from "../images/share-icon.png"
+import ShareScreen from "./ShareScreen";
 
 class ListScreen extends Component {
     constructor(props) {
@@ -16,8 +17,33 @@ class ListScreen extends Component {
             "showProduct": false,
             "productToAdd": false,
             "product": undefined,
-        }
+            "showShare": false,
+        };
     }
+
+    componentDidMount = () => {
+        if (window.location.hash) {
+            let str = atob(window.location.hash.substr(1));
+            let articules = str.split(":")[1];
+
+            let array = articules.split(",");
+
+            array.map((articul) => {
+                let product = this.getProductByArticul(articul);
+                this.addProduct(product);
+            })
+        }
+    };
+
+    setInitialState = () => {
+        this.setState({
+            "showQR": false,
+            "showProduct": false,
+            "productToAdd": false,
+            "product": undefined,
+            "showShare": false,
+        })
+    };
 
     getProductByArticul = (articul) => {
         for (let i = 0; i < data.length; i++) {
@@ -29,6 +55,41 @@ class ListScreen extends Component {
         return "Null"
     };
 
+    addProduct = (product) => {
+        let index = this.state.products.findIndex((element) => {
+            return element.articul === product.articul;
+        });
+
+        if (index === -1) {
+            product["count"] = 1;
+            this.setState({"products": [...this.state.products, product]})
+        } else {
+            let array = [...this.state.products];
+            array[index]["count"] += 1;
+            this.setState({"products": array});
+        }
+    };
+
+    deleteProduct = (product) => {
+        let index = this.state.products.indexOf(product);
+
+        if (index !== -1) {
+            let array = [...this.state.products];
+            array.splice(index, 1);
+            this.setState({"products": array});
+        }
+    };
+
+    getSumByProducts = (products) => {
+        let sum = 0;
+
+        products.map((product) => {
+            sum += parseFloat(product.price) * product.count;
+        });
+
+        return sum;
+    };
+
     onScan = (articul) => {
         this.setState({
             "showQR": false,
@@ -38,45 +99,44 @@ class ListScreen extends Component {
         });
     };
 
-    getSumByProducts = (products) => {
-        let sum = 0;
-
-        products.map((product) => {
-            sum += parseFloat(product.price)
-        });
-
-        return sum;
-    };
-
     render() {
         if (this.state.showQR) {
-            return (<QRScreen onScan={this.onScan} onReturn={() => {
-                this.setState({"showQR": false})
-            }}/>)
+            return (<QRScreen onScan={this.onScan} onReturn={this.setInitialState}/>)
+
         } else if (this.state.showProduct) {
-            return (<ProductScreen product={this.state.product} toAdd={this.state.productToAdd} onReturn={() => {
-                this.setState({"showProduct": false, "productToAdd": false, "product": undefined})
-            }} onAdd={() => {
-                this.setState({
-                    "showProduct": false,
-                    "product": undefined,
-                    "productToAdd": false,
-                    "products": [...this.state.products, this.state.product]
-                })
-            }} onRemove={() => {
-                let array = [...this.state.products];
-                let index = this.state.products.indexOf(this.state.product);
-
-                array.splice(index, 1);
-
-                this.setState({
-                    "showProduct": false,
-                    "product": undefined,
-                    "products": array
-                })
-            }}
+            return (<ProductScreen product={this.state.product} toAdd={this.state.productToAdd}
+                                   onReturn={this.setInitialState}
+                                   onAdd={() => {
+                                       this.addProduct(this.state.product);
+                                       this.setInitialState();
+                                   }}
+                                   onRemove={() => {
+                                       this.deleteProduct(this.state.product);
+                                       this.setInitialState();
+                                   }}
             />)
+
+        } else if (this.state.showShare) {
+            return (<ShareScreen products={this.state.products} onReturn={this.setInitialState}/>)
+
         } else {
+
+            let share_button = this.state.products.length !== 0 ?
+                <div style={{
+                    position: "fixed",
+                    bottom: 80,
+                    right: 20,
+                    background: "#66c05d",
+                    "border-radius": 100,
+                    padding: 5
+                }} onClick={() => {
+                    this.setState({"showShare": true})
+                }}>
+                    <img style={{
+                        width: 40
+                    }} src={share}/>
+                </div> : "";
+
             return (
                 <div>
                     <div className="row">
@@ -103,7 +163,7 @@ class ListScreen extends Component {
                                         </div>
                                         <div className="col-8" style={{"font-size": "10pt"}}>
                                             <p>{product.name}</p>
-                                            <p><i>{product.price}р</i> / за штуку</p>
+                                            <p><i>{product.price}р</i> / за штуку ({product.count})</p>
                                         </div>
                                     </div>
                                 </div>
@@ -136,6 +196,8 @@ class ListScreen extends Component {
                             width: 40
                         }} src={scan}/>
                     </div>
+
+                    {share_button}
                 </div>
             );
         }

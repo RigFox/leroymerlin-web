@@ -1,7 +1,5 @@
 import React, {Component} from "react";
 
-import '../css/LoadScreen.css';
-
 class ProductScreen extends Component {
     constructor(props) {
         super(props);
