@@ -16,7 +16,7 @@ class App extends Component {
 
     render() {
         {this.state.path === 'load' 
-            ? <LoadScreen load={this.load}/>
+            ? <LoadScreen load={this.handleLoad}/>
             : <ListScreen/>
         }
     }
