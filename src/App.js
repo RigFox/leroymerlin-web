@@ -6,27 +6,18 @@ import './css/App.css';
 import ListScreen from "./screens/ListScreen";
 
 class App extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {"path": "load"};
+    state = {
+       path: load   
     }
 
-    load = () => {
-        this.setState({"path": "list"});
-    };
+    handleLoad = () => {
+        this.setState({path: "list"});
+    }
 
     render() {
-        switch (this.state.path) {
-            case "load":
-                return (
-                    <LoadScreen load={this.load}/>
-                );
-            case "list":
-                return (
-                    <ListScreen/>
-                );
-            default:
-
+        {this.state.path === 'load' 
+            ? <LoadScreen load={this.handleLoad}/>
+            : <ListScreen/>
         }
     }
 }
